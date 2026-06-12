@@ -1,6 +1,6 @@
 # AI 활용 자유 주제 파이썬 미니 프로젝트
-# 이름 또는 학번: 
-# 프로젝트 주제: 
+# 이름 또는 학번: 20807
+# 프로젝트 주제: 우리 동네 미세먼지 및 대기오염 경보 시스템
 
 # ============================================================
 # 사용 안내
@@ -30,72 +30,74 @@
 # 3번 열: 활동 유형
 # ------------------------------------------------------------
 
-activities = [
-    ["산책하기", 30, "피곤", "운동"],
-    ["짧은 낮잠", 20, "피곤", "휴식"],
-    ["좋아하는 음악 듣기", 10, "우울", "휴식"],
-    ["문제집 3쪽 풀기", 40, "차분", "공부"],
-    ["방 정리하기", 25, "답답", "생활"],
-    ["친구에게 연락하기", 15, "우울", "소통"],
+# [1단계] 데이터 구조 만들기 (가상 데이터)
+dust_data = [
+    [32, 45, 28],   # 월요일 (0번 인덱스)
+    [15, 22, 18],   # 화요일 (1번 인덱스)
+    [78, 92, 110],  # 수요일 (2번 인덱스)
+    [40, 55, 38],   # 목요일 (3번 인덱스)
+    [155, 160, 142] # 금요일 (4번 인덱스)
 ]
 
-
-# ------------------------------------------------------------
-# 2. 함수 정의
-# ------------------------------------------------------------
-
-def show_intro():
-    """프로그램 제목과 안내를 출력한다."""
-    print("=" * 40)
-    print("AI 활용 자유 주제 파이썬 미니 프로젝트")
-    print("예시: 기분과 시간에 따른 활동 추천기")
-    print("=" * 40)
+day_name = ["월요일", "화요일", "수요일", "목요일", "금요일"]
 
 
-def get_user_input():
-    """사용자에게 기분과 남은 시간을 입력받는다."""
-    mood = input("현재 기분을 입력하세요. 예: 피곤, 우울, 차분, 답답: ")
-    minutes = int(input("사용 가능한 시간을 분 단위로 입력하세요: "))
-    return mood, minutes
 
 
-def find_recommendations(data, mood, minutes):
-    """2차원 리스트를 반복하며 조건에 맞는 활동을 찾는다."""
-    results = []
-
-    for row in data:
-        name = row[0]
-        required_minutes = row[1]
-        recommended_mood = row[2]
-        activity_type = row[3]
-
-        # 조건문: 사용자의 기분과 시간이 활동 조건에 맞는지 판단한다.
-        if recommended_mood == mood and required_minutes <= minutes:
-            results.append([name, required_minutes, activity_type])
-
-    return results
+def print_dust_table(data):
+   
+    print("\n--- [우리 동네 미세먼지 현황판] ---")
+    print("번호\t요일\t오전\t오후\t야간")
+    
+   
+    for i in range(len(data)):
+        print(f"{i}\t{day_name[i]}\t{data[i][0]}\t{data[i][1]}\t{data[i][2]}")
 
 
-def print_result(results):
-    """추천 결과를 출력한다."""
-    print("\n[추천 결과]")
+def get_average(day_data):
+    
+    total = 0
+ 
+    for value in day_data:
+        total += value
+        
+    avg = total / len(day_data)
+    return avg
 
-    if len(results) == 0:
-        print("조건에 맞는 활동이 없습니다.")
-        print("시간을 늘리거나 다른 기분을 입력해 보세요.")
+
+def check_warning(avg_value):
+
+    print(f"하루 평균 미세먼지 농도: {avg_value:.1f} µg/m³")
+    
+ 
+    if avg_value <= 35:
+        print("결과: [좋음] 공기가 깨끗합니다. 😊")
+    elif avg_value <= 75:
+        print("결과: [보통] 무난한 날씨입니다. 🌤️")
+    elif avg_value <= 150:
+        print("결과: [나쁨] 마스크를 착용하세요. 😷")
     else:
-        for item in results:
-            print(f"- {item[0]} / {item[1]}분 / 유형: {item[2]}")
+        print("결과: [매우 나쁨] 실외 활동을 자제하세요! 🚨")
 
 
-def main():
-    show_intro()
-    mood, minutes = get_user_input()
-    results = find_recommendations(activities, mood, minutes)
-    print_result(results)
+
+print("=== 미세먼지 및 대기오염 경보 시스템 ===")
+print_dust_table(dust_data)
+
+print("\n조회하고 싶은 요일의 번호를 입력하세요.")
+user_input = input("(월: 0, 화: 1, 수: 2, 목: 3, 금: 4) -> ")
 
 
-# ------------------------------------------------------------
-# 3. 프로그램 실행
-# ------------------------------------------------------------
-main()
+day_index = int(user_input)
+
+
+if day_index < 0 or day_index > 4:
+    print("❌ 올바른 요일 번호(0~4)를 입력해야 합니다. 프로그램을 종료합니다.")
+else:
+
+    selected_day_data = dust_data[day_index]
+    print(f"\n--- {day_name[day_index]} 분석 결과 ---")
+    
+
+    day_avg = get_average(selected_day_data)
+    check_warning(day_avg)
